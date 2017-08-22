@@ -10,3 +10,10 @@ class CreateUserView(mixins.CreateModelMixin, generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+class ChangeUserView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserSerializer
+    lookup_field = 'phone'

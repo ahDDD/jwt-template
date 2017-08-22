@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'account',
 ]
 
@@ -105,6 +107,24 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'account.User'
+AUTHENTICATION_BACKENDS =  (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # django-rest-framework-jwt
+    )
+}
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=30),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(minutes=5),
+    'JWT_ALLOW_REFRESH': True
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
