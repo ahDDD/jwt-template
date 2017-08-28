@@ -1,3 +1,5 @@
+const webpack = require('webpack')
+
 module.exports = {
   /*
   ** Headers of the page
@@ -20,6 +22,7 @@ module.exports = {
   /*
   ** Build configuration
   */
+  plugins: ['~/plugins/mint-ui'],
   build: {
     /*
     ** Run ESLINT on save
@@ -33,6 +36,16 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
-    }
+    },
+    vendor: [
+      'axios',
+      'mint-ui'
+    ],
+    plugins: [
+      '~/plugins/mint-ui',
+      new webpack.ProvidePlugin({
+        '_': 'lodash'
+      })
+    ]
   }
 }
