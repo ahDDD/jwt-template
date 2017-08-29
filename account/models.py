@@ -45,7 +45,7 @@ SEX = (
 )
 
 TYPE = (
-    ('gamer', '玩家'),
+    ('player', '玩家'),
     ('doctor', '医生')
 )
 

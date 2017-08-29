@@ -5,7 +5,7 @@ main
       mt-tab-container-item(id="index")
         mt-cell(v-for="n in 10" title="tab-container 1", :key="n")
       mt-tab-container-item(id="mine")
-        mt-cell(v-for="n in 5" title="tab-container 2", :key="n")
+        Mine
   .nav
     mt-tabbar(v-model="selected", :fixed="true")
       mt-tab-item(id="index")
@@ -18,15 +18,16 @@ main
 
 <script>
 import Logo from '~/components/Logo.vue'
+import Mine from '~/components/mine/index.vue'
 
 export default {
   components: {
-    Logo
+    Logo,
+    Mine
   },
   data () {
     return {
-      selected: '',
-      active: ''
+      selected: 'mine'
     }
   }
 }

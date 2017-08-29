@@ -42,7 +42,7 @@ module.exports = {
       'mint-ui'
     ],
     plugins: [
-      '~/plugins/mint-ui',
+      // '~/plugins/mint-ui',
       new webpack.ProvidePlugin({
         '_': 'lodash'
       })
