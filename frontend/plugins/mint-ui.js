@@ -5,6 +5,8 @@ import {
   Field,
   Header,
   PaletteButton,
+  Popup,
+  Picker,
   Tabbar,
   TabItem,
   TabContainer,
@@ -21,3 +23,5 @@ Vue.component(Button.name, Button)
 Vue.component(Header.name, Header)
 Vue.component(Field.name, Field)
 Vue.component(PaletteButton.name, PaletteButton)
+Vue.component(Popup.name, Popup)
+Vue.component(Picker.name, Picker)

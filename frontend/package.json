@@ -15,9 +15,11 @@
   "dependencies": {
     "axios": "^0.16.2",
     "mint-ui": "^2.2.9",
-    "nuxt": "^1.0.0-rc3"
+    "nuxt": "^1.0.0-rc3",
+    "validator": "^8.1.0"
   },
   "devDependencies": {
+    "@nuxtjs/proxy": "^1.1.1",
     "babel-eslint": "^7.2.3",
     "babel-plugin-component": "^0.10.0",
     "coffee-loader": "^0.8.0",

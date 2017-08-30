@@ -22,7 +22,9 @@ module.exports = {
   /*
   ** Build configuration
   */
-  plugins: ['~/plugins/mint-ui'],
+  plugins: [
+    '~/plugins/mint-ui'
+  ],
   build: {
     /*
     ** Run ESLINT on save
@@ -39,7 +41,8 @@ module.exports = {
     },
     vendor: [
       'axios',
-      'mint-ui'
+      'mint-ui',
+      'vee-validate'
     ],
     plugins: [
       // '~/plugins/mint-ui',
@@ -47,5 +50,11 @@ module.exports = {
         '_': 'lodash'
       })
     ]
+  },
+  modules: [
+    '@nuxtjs/proxy'
+  ],
+  proxy: {
+    '/api/**': 'http://127.0.0.1:8000'
   }
 }

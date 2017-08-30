@@ -82,7 +82,7 @@ DATABASES = {
         'NAME':'cool',          #数据库名
         'USER': 'root',          #数据库用户名
         'PASSWORD': 'passwd',            #数据库用户名密码
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': '5432',             #数据库远程连接端口
     }
 }

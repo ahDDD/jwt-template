@@ -1,7 +1,8 @@
 <template lang="pug">
 div
   .top
-    mt-button(type="default" @click="$router.push({ name: 'register' })") 未登录
+    nuxt-link(to="/register/")
+      mt-button(type="default") 未登录
   .settings
 </template>
 
