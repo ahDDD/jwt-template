@@ -5,21 +5,26 @@
       mt-button(icon="back")
   .register
     mt-field(label="用户名" placeholder="请输入手机号" v-model="formData.phone", :state="stateDisplay('phone')")
-    mt-field(label="密码" placeholder="请输入密码" type="password" v-modal="formData.password", :state="stateDisplay('password')")
-    mt-field(label="姓名" placeholder="请输入姓名" v-modal="formData.name", :state="stateDisplay('name')")
-    mt-popup(
-      v-model="popupVisible"
-      position="bottom")
-    mt-field(label="性别" placeholder="请输入性别" v-modal="formData.sex", :state="stateDisplay('phone')")
-    mt-field(:label="teamLabel", :placeholder="`请输入${teamLabel}`" v-modal="formData.team", :state="stateDisplay('team')")
+    mt-field(label="密码" placeholder="请输入密码" type="password" v-model="formData.password", :state="stateDisplay('password')")
+    mt-field(label="姓名" placeholder="请输入姓名" v-model="formData.name", :state="stateDisplay('name')")
+    mt-field(
+      readonly,
+      label="性别"
+      placeholder="请输入性别"
+      v-model="formData.sex",
+      :state="stateDisplay('phone')"
+      @click.native="genderPopup = true")
+    mt-field(:label="teamLabel", :placeholder="`请输入${teamLabel}`" v-model="formData.team", :state="stateDisplay('team')")
     mt-field(
       v-if="this.$route.params.type === 'player'",
       label="游戏",
       placeholder="请输入游戏"
-      v-modal="formData.game",
+      v-model="formData.game",
       :state="stateDisplay('game')")
-    mt-field(:label="jobLabel", :placeholder="`请输入${jobLabel}`" v-modal="formData.job", :state="stateDisplay('job')")
+    mt-field(:label="jobLabel", :placeholder="`请输入${jobLabel}`" v-model="formData.job", :state="stateDisplay('job')")
     mt-button(size="large" @click.native="register") 注册
+  mt-popup(v-model="genderPopup" position="bottom")
+    mt-picker(:slots="genderSlot" @change="onGenderChange")
 </template>
 
 <script>
@@ -56,7 +61,11 @@ export default {
         job: '',
         email: ''
       },
-      validated: false
+      validated: false,
+      genderPopup: false,
+      genderSlot: [{
+        values: ['男', '女', '保密']
+      }]
     }
   },
   methods: {
@@ -91,6 +100,10 @@ export default {
     },
     isValidate () {
       return Object.values(this.validates).every(x => x)
+    },
+    onGenderChange (picker, values) {
+      // console.log(values)
+      this.formData.sex = values[0]
     }
   },
   computed: {
