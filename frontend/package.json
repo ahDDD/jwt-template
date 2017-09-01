@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "mint-ui": "^2.2.9",
+    "muse-ui": "^2.1.0",
     "nuxt": "^1.0.0-rc3",
     "validator": "^8.1.0"
   },

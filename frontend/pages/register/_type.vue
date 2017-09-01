@@ -1,30 +1,63 @@
 <template lang="pug">
 .register
-  mt-header(title="注册")
+  mu-appbar(title="注册")
     nuxt-link(to="/register/" slot="left")
-      mt-button(icon="back")
-  .register
-    mt-field(label="用户名" placeholder="请输入手机号" v-model="formData.phone", :state="stateDisplay('phone')")
-    mt-field(label="密码" placeholder="请输入密码" type="password" v-model="formData.password", :state="stateDisplay('password')")
-    mt-field(label="姓名" placeholder="请输入姓名" v-model="formData.name", :state="stateDisplay('name')")
-    mt-field(
-      readonly,
-      label="性别"
-      placeholder="请输入性别"
+      mu-icon-button(icon="navigate_before" slot="left")
+  mu-content-block
+    mu-text-field(
+      labelFloat
+      label="用户名"
+      hintText="请输入用户名"
+      v-model="formData.phone",
+      :errorText="error.phone"
+      fullWidth)
+    mu-text-field(
+      labelFloat
+      label="密码"
+      hintText="请输入密码"
+      type="password",
+      v-model="formData.password",
+      :errorText="error.password"
+      fullWidth)
+    mu-text-field(
+      labelFloat
+      label="姓名"
+      hintText="请输入真实姓名"
+      v-model="formData.name",
+      :errorText="error.name"
+      fullWidth)
+    mu-select-field(
       v-model="formData.sex",
-      :state="stateDisplay('phone')"
-      @click.native="genderPopup = true")
-    mt-field(:label="teamLabel", :placeholder="`请输入${teamLabel}`" v-model="formData.team", :state="stateDisplay('team')")
-    mt-field(
-      v-if="this.$route.params.type === 'player'",
-      label="游戏",
-      placeholder="请输入游戏"
+      :labelFocusClass="['label-foucs']"
+      label="性别",
+      :errorText="error.sex"
+      fullWidth)
+      mu-menu-item(value="male" title="男")
+      mu-menu-item(value="female" title="女")
+      mu-menu-item(value="secret" title="保密")
+    mu-text-field(
+      labelFloat,
+      :label="teamLabel",
+      :hintText="`请输入${teamLabel}`"
+      v-model="formData.team",
+      :errorText="error.team"
+      fullWidth)
+    mu-text-field(
+      v-if="this.$route.params.type === 'player'"
+      labelFloat
+      label="游戏"
+      hintText="请输入游戏"
       v-model="formData.game",
-      :state="stateDisplay('game')")
-    mt-field(:label="jobLabel", :placeholder="`请输入${jobLabel}`" v-model="formData.job", :state="stateDisplay('job')")
-    mt-button(size="large" @click.native="register") 注册
-  mt-popup(v-model="genderPopup" position="bottom")
-    mt-picker(:slots="genderSlot" @change="onGenderChange")
+      :errorText="error.game"
+      fullWidth)
+    mu-text-field(
+      labelFloat,
+      :label="jobLabel",
+      :hintText="`请输入${jobLabel}`"
+      v-model="formData.job",
+      :errorText="error.job"
+      fullWidth)
+    mu-raised-button(label="注册" @click="register" fullWidth primary)
 </template>
 
 <script>
@@ -51,7 +84,7 @@ export default {
       },
       teamLabel: '',
       jobLabel: '',
-      validates: {
+      error: {
         phone: '',
         password: '',
         name: '',
@@ -64,6 +97,7 @@ export default {
       validated: false,
       genderPopup: false,
       genderSlot: [{
+        defaultIndex: 0,
         values: ['男', '女', '保密']
       }]
     }
@@ -76,41 +110,59 @@ export default {
     },
     validate () {
       Object.keys(this.formData).forEach(x => {
-        console.log(x)
-        this.validates[x] = {
-          'phone': isMobilePhone(this.formData[x], 'zh-CN'),
-          'password': this.formData[x] ? '' : true
-        }[x]
+        this.error[x] = this.formData[x] === '' ? '不能为空' : ''
+        if (x === 'phone') {
+          this.error[x] = isMobilePhone(this.formData[x], 'zh-CN') ? '' : '用户名必须为合法手机号'
+        }
       })
-      this.validated = true
     },
     register () {
       this.validate()
-      console.log(this.isValidate())
-    },
-    stateDisplay (key) {
-      const data = this.validates[key]
-      if (!this.validated) {
-        return ''
-      } else if (data === '') {
-        return 'warning'
+      if (this.isValidate()) {
+        this.Indicator.open()
+        this.$http.post(this.url.REGISTER, {
+          ...this.formData
+        })
+          .then(response => {
+            this.Indicator.close()
+            this.Toast({
+              message: '注册成功'
+            })
+          })
+          .catch(response => {
+            this.Indicator.close()
+            this.Toast({
+              message: '注册失败'
+            })
+          })
       } else {
-        return this.validates[key] ? 'success' : 'error'
+        this.Toast({
+          message: '输入有误'
+        })
       }
     },
     isValidate () {
-      return Object.values(this.validates).every(x => x)
-    },
-    onGenderChange (picker, values) {
-      // console.log(values)
-      this.formData.sex = values[0]
+      return Object.values(this.error).every(x => x === '')
     }
   },
   computed: {
+    statePhone () {
+      const data = this.formData.phone
+      return data ? isMobilePhone(data, 'zh-CN') ? '' : '用户名必须为合法手机号' : '不能为空'
+    },
+    statePass () {
+      const data = this.formData.password
+      return data ? '' : '不能为空'
+    },
+    stateName () {
+      const data = this.formData.name
+      return data ? '' : '不能为空'
+    }
   }
 }
 </script>
 
 <style lang="stylus">
-
+a
+  color white
 </style>

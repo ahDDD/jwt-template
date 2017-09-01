@@ -4,13 +4,15 @@ import {
   Cell,
   Field,
   Header,
+  Indicator,
   PaletteButton,
   Popup,
   Picker,
   Tabbar,
   TabItem,
   TabContainer,
-  TabContainerItem
+  TabContainerItem,
+  Toast
 } from 'mint-ui'
 import 'mint-ui/lib/style.css'
 
@@ -25,3 +27,5 @@ Vue.component(Field.name, Field)
 Vue.component(PaletteButton.name, PaletteButton)
 Vue.component(Popup.name, Popup)
 Vue.component(Picker.name, Picker)
+Vue.prototype.Indicator = Indicator
+Vue.prototype.Toast = Toast

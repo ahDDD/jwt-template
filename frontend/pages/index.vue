@@ -33,13 +33,11 @@ export default {
 }
 </script>
 
-<style>
-.item {
-  display: inline-block;
-}
-.link {
-  color: inherit;
-  padding: 20px;
-  display: block;
-}
+<style lang="stylus">
+.item
+  display inline-block
+.link
+  color inherit
+  padding 20px
+  display block
 </style>
