@@ -1,12 +1,15 @@
 <template lang="pug">
 .register
-  mt-header(title="注册")
+  mu-appbar(title="注册")
     nuxt-link(to="/" slot="left")
-      mt-button(icon="back")
-  nuxt-link(to="/register/doctor/")
-    mt-button(type="primary") 医生
-  nuxt-link(to="/register/player/")
-    mt-button(type="default") 玩家
+      mu-icon-button(icon="navigate_before")
+  mu-content-block.register-content.type
+    nuxt-link(to="/register/doctor/").type-button
+      mu-raised-button(label="医生" fullWidth primary)
+    nuxt-link(to="/register/player/").type-button
+      mu-raised-button(label="玩家" primary fullWidth)
+    nuxt-link(to="/register/normal/").type-button
+      mu-raised-button(label="普通用户" primary fullWidth)
 </template>
 
 <script>
@@ -23,5 +26,11 @@ export default {
 </script>
 
 <style lang="stylus">
-
+.register-content.type
+  height 50vh
+  display: flex
+  flex-direction: column
+  padding-top 1.5em
+.type-button
+  margin-bottom 1em
 </style>

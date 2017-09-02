@@ -1,2 +1,4 @@
 body
   font-family 'Noto Sans CJK', '-apple-system', "Helvetica Neue", "Roboto", "Segoe UI", sans-serif
+a.nuxt-link-active
+  color white

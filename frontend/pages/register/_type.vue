@@ -3,14 +3,16 @@
   mu-appbar(title="注册")
     nuxt-link(to="/register/" slot="left")
       mu-icon-button(icon="navigate_before" slot="left")
-  mu-content-block
+  mu-linear-progress(v-if="loading")
+  mu-content-block.register-content
     mu-text-field(
       labelFloat
       label="用户名"
       hintText="请输入用户名"
       v-model="formData.phone",
       :errorText="error.phone"
-      fullWidth)
+      fullWidth
+      @focus="error.phone = ''")
     mu-text-field(
       labelFloat
       label="密码"
@@ -18,30 +20,37 @@
       type="password",
       v-model="formData.password",
       :errorText="error.password"
-      fullWidth)
+      fullWidth
+      @focus="error.password = ''")
     mu-text-field(
       labelFloat
       label="姓名"
       hintText="请输入真实姓名"
       v-model="formData.name",
       :errorText="error.name"
-      fullWidth)
+      fullWidth
+      @focus="error.name = ''"
+      @textOverflow="handleNameOverflow"
+      :maxLength="10")
     mu-select-field(
       v-model="formData.sex",
       :labelFocusClass="['label-foucs']"
       label="性别",
       :errorText="error.sex"
-      fullWidth)
+      fullWidth
+      @open="error.sex = ''")
       mu-menu-item(value="male" title="男")
       mu-menu-item(value="female" title="女")
       mu-menu-item(value="secret" title="保密")
     mu-text-field(
+      v-if="this.$route.params.type !== 'normal'"
       labelFloat,
       :label="teamLabel",
       :hintText="`请输入${teamLabel}`"
       v-model="formData.team",
       :errorText="error.team"
-      fullWidth)
+      fullWidth
+      @focus="error.team = ''")
     mu-text-field(
       v-if="this.$route.params.type === 'player'"
       labelFloat
@@ -49,25 +58,58 @@
       hintText="请输入游戏"
       v-model="formData.game",
       :errorText="error.game"
-      fullWidth)
+      fullWidth
+      @focus="error.game = ''")
     mu-text-field(
+      v-if="this.$route.params.type !== 'normal'"
       labelFloat,
       :label="jobLabel",
       :hintText="`请输入${jobLabel}`"
       v-model="formData.job",
       :errorText="error.job"
-      fullWidth)
+      fullWidth
+      @focus="error.job = ''")
+    mu-text-field(
+      labelFloat,
+      label="邮箱",
+      hintText="请输入邮箱"
+      v-model="formData.email",
+      :errorText="error.email"
+      fullWidth
+      @focus="error.email = ''")
     mu-raised-button(label="注册" @click="register" fullWidth primary)
+  mu-snackbar(
+    v-if="snackbar.show",
+    :message="snackbar.message"
+    action="关闭"
+    @actionClick="hideSnackbar"
+    @close="hideSnackbar")
 </template>
 
 <script>
 import isMobilePhone from 'validator/lib/isMobilePhone'
+import isEmail from 'validator/lib/isEmail'
 
 export default {
+  validate ({ params }) {
+    console.log(params)
+    return ['doctor', 'normal', 'player'].indexOf(params.type) > -1
+  },
   created () {
     const type = this.$route.params.type
     this.renderField(type)
     this.formData.user_type = type
+    if (type === 'player') {
+      ['game', 'job', 'team'].forEach(x => {
+        this.formData[x] = ''
+        this.error[x] = ''
+      })
+    } else if (type === 'doctor') {
+      ['job', 'team'].forEach(x => {
+        this.formData[x] = ''
+        this.error[x] = ''
+      })
+    }
   },
   data () {
     return {
@@ -77,9 +119,6 @@ export default {
         password: '',
         name: '',
         sex: '',
-        team: '',
-        game: '',
-        job: '',
         email: ''
       },
       teamLabel: '',
@@ -89,9 +128,6 @@ export default {
         password: '',
         name: '',
         sex: '',
-        team: '',
-        game: '',
-        job: '',
         email: ''
       },
       validated: false,
@@ -99,7 +135,13 @@ export default {
       genderSlot: [{
         defaultIndex: 0,
         values: ['男', '女', '保密']
-      }]
+      }],
+      snackbar: {
+        show: false,
+        message: '',
+        time: ''
+      },
+      loading: false
     }
   },
   methods: {
@@ -113,36 +155,45 @@ export default {
         this.error[x] = this.formData[x] === '' ? '不能为空' : ''
         if (x === 'phone') {
           this.error[x] = isMobilePhone(this.formData[x], 'zh-CN') ? '' : '用户名必须为合法手机号'
+        } else if (x === 'email') {
+          this.error[x] = isEmail(this.formData[x]) ? '' : '请输入合法邮箱'
         }
       })
     },
     register () {
       this.validate()
       if (this.isValidate()) {
-        this.Indicator.open()
+        this.loading = true
         this.$http.post(this.url.REGISTER, {
           ...this.formData
         })
           .then(response => {
-            this.Indicator.close()
-            this.Toast({
-              message: '注册成功'
-            })
+            this.loading = false
+            this.showSnackbar('注册成功')
           })
           .catch(response => {
-            this.Indicator.close()
-            this.Toast({
-              message: '注册失败'
-            })
+            this.loading = false
+            this.showSnackbar('注册失败')
           })
       } else {
-        this.Toast({
-          message: '输入有误'
-        })
+        this.showSnackbar('输入有误, 请重新输入')
       }
     },
     isValidate () {
       return Object.values(this.error).every(x => x === '')
+    },
+    handleNameOverflow (isOverflow) {
+      this.error.name = isOverflow ? '过长了' : ''
+    },
+    showSnackbar (message) {
+      this.snackbar.message = message
+      this.snackbar.show = true
+      if (this.snackbar.time) clearTimeout(this.snackbar.time)
+      this.snackbar.time = setTimeout(() => { this.snackbar.show = false }, 2000)
+    },
+    hideSnackbar () {
+      this.snackbar.show = false
+      if (this.snackbar.time) clearTimeout(this.snackbar.time)
     }
   },
   computed: {
@@ -163,6 +214,7 @@ export default {
 </script>
 
 <style lang="stylus">
-a
-  color white
+.register-content
+  height 90vh
+  overflow scroll
 </style>

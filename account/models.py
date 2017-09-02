@@ -46,6 +46,7 @@ SEX = (
 
 TYPE = (
     ('player', '玩家'),
+    ('normal', '用户'),
     ('doctor', '医生')
 )
 
@@ -58,9 +59,9 @@ class User(AbstractBaseUser):
     user_type = models.CharField(choices=TYPE, max_length=6, blank=True)
     name = models.CharField(max_length=10, blank=True)
     sex = models.CharField(choices=SEX, max_length=6, blank=True)
-    team = models.CharField(max_length=255, blank=True)
+    team = models.CharField(max_length=255, default=None, blank=True, null=True)
     game = models.CharField(max_length=140, default=None, null=True, blank=True)
-    job = models.CharField(max_length=140, blank=True)
+    job = models.CharField(max_length=140, default=None, null=True, blank=True)
     email = models.EmailField(max_length=255, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

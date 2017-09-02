@@ -46,8 +46,7 @@ module.exports = {
     vendor: [
       'axios',
       'mint-ui',
-      'url',
-      'vee-validate'
+      'url'
     ],
     plugins: [
       // '~/plugins/mint-ui',

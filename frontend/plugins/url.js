@@ -4,7 +4,7 @@ import axios from 'axios'
 const URL = {
   install (Vue, options) {
     Vue.prototype.url = {
-      REGISTER: '/api/register/'
+      REGISTER: '/api/account/register/'
     }
   }
 }
