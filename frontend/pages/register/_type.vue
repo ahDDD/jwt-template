@@ -166,15 +166,13 @@ export default {
         this.loading = true
         this.$http.post(this.url.REGISTER, {
           ...this.formData
+        }).then(response => {
+          this.loading = false
+          this.showSnackbar('注册成功')
+        }).catch(response => {
+          this.loading = false
+          this.showSnackbar('注册失败')
         })
-          .then(response => {
-            this.loading = false
-            this.showSnackbar('注册成功')
-          })
-          .catch(response => {
-            this.loading = false
-            this.showSnackbar('注册失败')
-          })
       } else {
         this.showSnackbar('输入有误, 请重新输入')
       }

@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   .top
-    nuxt-link(to="/register/")
+    nuxt-link(to="/login/")
       mt-button(type="default") 未登录
   .settings
 </template>

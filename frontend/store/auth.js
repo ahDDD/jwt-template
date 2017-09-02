@@ -31,18 +31,17 @@ export const mutations = {
 
 export const actions = {
   login ({ commit }, user) {
-    return axios.post('api/account/login/', user)
-      .then(response => {
-        const data = response.data
-        commit('UPDATE', {
-          user: data.user,
-          token: data.token,
-          expire: data.expire
-        })
+    return axios.post('/api/account/login/', user).then(response => {
+      const data = response.data
+      commit('UPDATE', {
+        user: data.user,
+        token: data.token,
+        expire: data.expire
       })
-      .catch(response => {
-        return Promise.reject(response.data.error)
-      })
+      return Promise.resolve()
+    }).catch(response => {
+      return Promise.reject(response.data)
+    })
   },
   logout ({ commit }, user) {
     commit('REMOVE')
