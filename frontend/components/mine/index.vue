@@ -1,17 +1,62 @@
 <template lang="pug">
 div
   .top
-    nuxt-link(to="/login/")
-      mt-button(type="default") 未登录
+    nuxt-link.mine-center(to="/login/")
+      mu-paper(class="mine-paper" circle :zDepth="4")
+        i(class="material-icons mine-icon") face
+      mu-flat-button.mine-button(:label="`你好, ${userName}`" color="white")
   .settings
+    mu-content-block
+      mu-menu.mine-menu(:autoWidth="false", width="auto")
+        template(v-if="isLogin")
+          mu-menu-item(title="修改个人资料" rightIcon="keyboard_arrow_right")
+          mu-divider
+          mu-menu-item(title="关于我们" rightIcon="keyboard_arrow_right")
+          mu-divider
+          mu-menu-item(title="退出登录" rightIcon="keyboard_arrow_right" @click="logout")
+        template(v-else)
+          mu-menu-item(title="立即登录" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'login' })")
 </template>
 
 <script>
-export default {
+import { mapActions, mapGetters } from 'vuex'
 
+export default {
+  methods: {
+    ...mapActions('auth', [
+      'logout'
+    ])
+  },
+  computed: {
+    ...mapGetters('auth', [
+      'isLogin',
+      'userName'
+    ])
+  }
 }
 </script>
 
 <style lang="stylus">
-
+.top
+  background-color teal
+  display flex
+  justify-content center
+  padding-top 3em
+  padding-bottom 1.5em
+.mine-center
+  display flex
+  flex-direction column
+  justify-content space-between
+  align-items center
+.mine-paper
+  display flex
+  justify-content center
+  align-items center
+  .mine-icon
+    font-size 80px
+    color #455a64
+.mine-menu
+  overflow auto
+.mine-button
+  padding-top 0.5em
 </style>

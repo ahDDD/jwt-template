@@ -3,17 +3,14 @@ main
   .page-tab-container
     mt-tab-container(v-model="selected" swipeable)
       mt-tab-container-item(id="index")
-        mt-cell(v-for="n in 10" title="tab-container 1", :key="n")
+        p nihao
       mt-tab-container-item(id="mine")
         Mine
   .nav
-    mt-tabbar(v-model="selected", :fixed="true")
-      mt-tab-item(id="index")
-        img(slot="icon")
-        template 首页
-      mt-tab-item(id="mine")
-        img(slot="icon")
-        template 我的
+    mu-paper
+      mu-bottom-nav(:value="selected" @change="handleChange")
+        mu-bottom-nav-item(value="index" title="首页" icon="home")
+        mu-bottom-nav-item(value="mine" title="我的" icon="account_circle")
 </template>
 
 <script>
@@ -29,11 +26,22 @@ export default {
     return {
       selected: 'mine'
     }
+  },
+  methods: {
+    handleChange (val) {
+      this.selected = val
+    }
   }
 }
 </script>
 
 <style lang="stylus">
+main
+  display flex
+  min-height 100vh
+  flex-direction column
+.page-tab-container
+  flex 1
 .item
   display inline-block
 .link

@@ -4,6 +4,8 @@ module.exports = {
   /*
   ** Headers of the page
   */
+  // ssr无法使用localStorage, 只能使用spa模式
+  mode: 'spa',
   head: {
     title: 'frontend',
     meta: [

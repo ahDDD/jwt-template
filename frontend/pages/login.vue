@@ -79,7 +79,8 @@ export default {
         this.loading = true
         this.login(this.formData).then(response => {
           this.loading = false
-          this.showSnackbar('登录成功')
+          this.showSnackbar('登录成功, 跳转至首页')
+          setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
         }).catch(response => {
           this.loading = false
           this.showSnackbar(`登录失败: ${response.non_field_errors.join(',')}`)
@@ -112,6 +113,7 @@ export default {
 .login-button
   margin-top 2.5em
 .find-button
-  display: flex;
-  justify-content: flex-end;
+  // display: flex
+  // justify-content: flex-end
+  float right
 </style>
