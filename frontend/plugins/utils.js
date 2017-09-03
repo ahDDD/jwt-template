@@ -11,3 +11,4 @@ const URL = {
 
 Vue.use(URL)
 Vue.prototype.$http = axios
+Vue.prototype._ = require('lodash')

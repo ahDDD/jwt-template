@@ -92,7 +92,6 @@ import isEmail from 'validator/lib/isEmail'
 
 export default {
   validate ({ params }) {
-    console.log(params)
     return ['doctor', 'normal', 'player'].indexOf(params.type) > -1
   },
   created () {

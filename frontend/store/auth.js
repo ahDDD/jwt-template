@@ -30,6 +30,9 @@ export const getters = {
   },
   userName (state) {
     return state.login ? state.user.name : '未登录'
+  },
+  user (state) {
+    return state.user
   }
 }
 

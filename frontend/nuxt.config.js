@@ -29,7 +29,7 @@ module.exports = {
   plugins: [
     '~/plugins/mint-ui',
     '~/plugins/muse-ui',
-    '~/plugins/url'
+    '~/plugins/utils'
   ],
   build: {
     /*
@@ -48,7 +48,8 @@ module.exports = {
     vendor: [
       'axios',
       'mint-ui',
-      'url'
+      'url',
+      'lodash'
     ],
     plugins: [
       // '~/plugins/mint-ui',

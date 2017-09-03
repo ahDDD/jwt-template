@@ -1,10 +1,10 @@
 <template lang="pug">
 div
   .top
-    nuxt-link.mine-center(to="/login/")
+    nuxt-link.mine-avatar-center(:to="avatarPath")
       mu-paper(class="mine-paper" circle :zDepth="4")
         i(class="material-icons mine-icon") face
-      mu-flat-button.mine-button(:label="`你好, ${userName}`" color="white")
+      mu-flat-button.mine-avatar-button(:label="`你好, ${userName}`" color="white")
   .settings
     mu-content-block
       mu-menu.mine-menu(:autoWidth="false", width="auto")
@@ -31,7 +31,10 @@ export default {
     ...mapGetters('auth', [
       'isLogin',
       'userName'
-    ])
+    ]),
+    avatarPath () {
+      return this.isLogin ? '/setting/' : '/login/'
+    }
   }
 }
 </script>
@@ -43,11 +46,13 @@ export default {
   justify-content center
   padding-top 3em
   padding-bottom 1.5em
-.mine-center
+.mine-avatar-center
   display flex
   flex-direction column
   justify-content space-between
   align-items center
+.mine-avatar-button
+  padding-top 0.5em
 .mine-paper
   display flex
   justify-content center
@@ -57,6 +62,4 @@ export default {
     color #455a64
 .mine-menu
   overflow auto
-.mine-button
-  padding-top 0.5em
 </style>
