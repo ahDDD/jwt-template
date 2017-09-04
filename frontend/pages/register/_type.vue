@@ -30,7 +30,7 @@
       :errorText="error.name"
       fullWidth
       @focus="error.name = ''"
-      @textOverflow="handleNameOverflow"
+      @textOverflow="handleNameOverflow",
       :maxLength="10")
     mu-select-field(
       v-model="formData.sex",
@@ -94,21 +94,23 @@ export default {
   validate ({ params }) {
     return ['doctor', 'normal', 'player'].indexOf(params.type) > -1
   },
-  created () {
+  mounted () {
     const type = this.$route.params.type
-    this.renderField(type)
-    this.formData.user_type = type
-    if (type === 'player') {
-      ['game', 'job', 'team'].forEach(x => {
-        this.formData[x] = ''
-        this.error[x] = ''
-      })
-    } else if (type === 'doctor') {
-      ['job', 'team'].forEach(x => {
-        this.formData[x] = ''
-        this.error[x] = ''
-      })
-    }
+    this.$nextTick(() => {
+      this.renderField(type)
+      this.formData.user_type = type
+      if (type === 'player') {
+        ['game', 'job', 'team'].forEach(x => {
+          this.formData[x] = ''
+          this.error[x] = ''
+        })
+      } else if (type === 'doctor') {
+        ['job', 'team'].forEach(x => {
+          this.formData[x] = ''
+          this.error[x] = ''
+        })
+      }
+    })
   },
   data () {
     return {
@@ -168,9 +170,11 @@ export default {
         }).then(response => {
           this.loading = false
           this.showSnackbar('注册成功')
-        }).catch(response => {
+        }).catch(error => {
+          const data = error.response.data
+          const message = [].concat.apply([], Object.values(data)).join(',')
           this.loading = false
-          this.showSnackbar('注册失败')
+          this.showSnackbar(`注册失败: ${message}`)
         })
       } else {
         this.showSnackbar('输入有误, 请重新输入')
@@ -186,7 +190,7 @@ export default {
       this.snackbar.message = message
       this.snackbar.show = true
       if (this.snackbar.time) clearTimeout(this.snackbar.time)
-      this.snackbar.time = setTimeout(() => { this.snackbar.show = false }, 2000)
+      this.snackbar.time = setTimeout(() => { this.snackbar.show = false }, 2500)
     },
     hideSnackbar () {
       this.snackbar.show = false

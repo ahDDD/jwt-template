@@ -3,13 +3,16 @@
   mu-appbar(title="修改个人资料")
     nuxt-link.nuxt-link-active(to="/" slot="left")
       mu-icon-button(icon="navigate_before")
+  mu-linear-progress(v-if="loading")
   mu-menu.setting-menu(:autoWidth="false", width="auto")
-    mu-menu-item.setting-item(title="姓名" :afterText="userInfo.name" @click="openDialog('姓名')")
-    mu-menu-item.setting-item(title="性别" :afterText="userInfo.sex" @click="openDialog('性别')")
-    mu-menu-item.setting-item(title="邮箱" :afterText="userInfo.email" @click="openDialog('邮箱')")
+    mu-menu-item.setting-item(title="姓名", :afterText="userInfo.name" @click="openDialog('姓名')")
+    mu-menu-item.setting-item(title="性别", :afterText="sexDisplay" @click="openDialog('性别')")
+    mu-menu-item.setting-item(title="邮箱", :afterText="userInfo.email" @click="openDialog('邮箱')")
     mu-menu-item.setting-item(
-      v-if="isNotNormal"
-      :title="teamTitle" :afterText="userInfo.team" @click="openDialog(teamTitle)")
+      v-if="isNotNormal",
+      :title="teamTitle",
+      :afterText="userInfo.team"
+      @click="openDialog(teamTitle)")
     mu-menu-item.setting-item(
       v-if="userInfo.user_type === 'player'",
       title="游戏",
@@ -22,18 +25,27 @@
       @click="openDialog(jobTitle)")
   mu-content-block
     mu-raised-button(label="保存" @click="handleSave" fullWidth primary)
-  mu-dialog(:open="dialog.show" :title="dialog.title" @close="dialog.show = false")
-    mu-text-field(v-model="dialog.value" fullWidth required)
-    mu-flat-button(slot="actions" @click="dialog.show = false" primary label="取消")
-    mu-flat-button(slot="actions" primary @click="close" label="确定")
+  dialog-field(:user-info="userInfo" ref="dialog")
+  mu-snackbar(
+    v-if="snackbar.show",
+    :message="snackbar.message"
+    action="关闭"
+    @actionClick="hideSnackbar"
+    @close="hideSnackbar")
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
+import DialogField from '~/components/setting/dialog-field.vue'
 
 export default {
-  created () {
-    this.userInfo = this._.cloneDeep(this.user)
+  components: {
+    DialogField
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.userInfo = this._.cloneDeep(this.user)
+    })
   },
   data () {
     return {
@@ -44,35 +56,49 @@ export default {
         title: '',
         transKey: ''
       },
-      userInfo: {}
+      userInfo: {},
+      snackbar: {
+        show: false,
+        message: '',
+        time: ''
+      },
+      loading: false
     }
   },
   methods: {
+    ...mapActions([
+      'update'
+    ]),
     openDialog (key) {
-      this.dialog.title = key
-      this.dialog.transKey = {
-        '姓名': 'name',
-        '性别': 'sex',
-        '邮箱': 'email',
-        '战队': 'team',
-        '医院': 'team',
-        '职位': 'job',
-        '职称': 'job',
-        '游戏': 'game'
-      }[key]
-      this.dialog.value = this._.cloneDeep(this.userInfo[this.dialog.transKey])
-      this.$nextTick(() => {
-        this.dialog.show = true
-      })
+      this.$refs.dialog.openDialog(key)
     },
-    close () {
-      this.userInfo[this.dialog.transKey] = this.dialog.value
-      this.dialog.show = false
+    handleSave () {
+      this.loading = true
+      this.update(this._.cloneDeep(this.userInfo))
+        .then(() => {
+          this.loading = false
+          this.showSnackbar('修改成功')
+          setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
+        })
+        .catch(data => {
+          const message = [].concat.apply([], Object.values(data)).join(',')
+          this.loading = false
+          this.showSnackbar(`修改失败: ${message}`)
+        })
     },
-    handleSave () {}
+    showSnackbar (message) {
+      this.snackbar.message = message
+      this.snackbar.show = true
+      if (this.snackbar.time) clearTimeout(this.snackbar.time)
+      this.snackbar.time = setTimeout(() => { this.snackbar.show = false }, 1500)
+    },
+    hideSnackbar () {
+      this.snackbar.show = false
+      if (this.snackbar.time) clearTimeout(this.snackbar.time)
+    }
   },
   computed: {
-    ...mapGetters('auth', [
+    ...mapGetters([
       'isLogin',
       'user'
     ]),
@@ -84,6 +110,13 @@ export default {
     },
     isNotNormal () {
       return ['player', 'doctor'].indexOf(this.user.user_type) > -1
+    },
+    sexDisplay () {
+      return {
+        'male': '男',
+        'female': '女',
+        'secret': '保密'
+      }[this.userInfo.sex]
     }
   }
 }

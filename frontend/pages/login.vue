@@ -59,7 +59,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('auth', [
+    ...mapActions([
       'login'
     ]),
     validate () {
@@ -77,13 +77,13 @@ export default {
       this.validate()
       if (this.isValidate()) {
         this.loading = true
-        this.login(this.formData).then(response => {
+        this.login(this.formData).then(() => {
           this.loading = false
           this.showSnackbar('登录成功, 跳转至首页')
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
-        }).catch(response => {
+        }).catch(data => {
           this.loading = false
-          this.showSnackbar(`登录失败: ${response.non_field_errors.join(',')}`)
+          this.showSnackbar(`登录失败: ${data.non_field_errors.join(',')}`)
         })
       } else {
         this.showSnackbar('输入有误, 请重新输入')

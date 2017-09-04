@@ -59,10 +59,19 @@ module.exports = {
     ]
   },
   modules: [
-    '@nuxtjs/proxy'
+    '@nuxtjs/proxy',
+    '@nuxtjs/axios'
   ],
   proxy: {
     '/api/**': 'http://127.0.0.1:8000'
+  },
+  axios: {
+    requestInterceptor: (config, { store }) => {
+      if (store.state.token) {
+        config.headers.common['Authorization'] = `COOL ${store.state.token}`
+      }
+      return config
+    }
   },
   css: [
     { src: '~assets/css/font.stylus', lang: 'stylus' }

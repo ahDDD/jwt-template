@@ -23,12 +23,12 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   methods: {
-    ...mapActions('auth', [
+    ...mapActions([
       'logout'
     ])
   },
   computed: {
-    ...mapGetters('auth', [
+    ...mapGetters([
       'isLogin',
       'userName'
     ]),

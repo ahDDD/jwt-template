@@ -124,7 +124,8 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=30),
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_ALLOW_REFRESH': True,
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'account.jwt.custom_jwt_response'
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'account.jwt.custom_jwt_response',
+    'JWT_AUTH_HEADER_PREFIX': 'COOL', # 请求头前缀
 }
 
 # Internationalization
