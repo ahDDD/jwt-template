@@ -48,6 +48,7 @@ module.exports = {
     vendor: [
       'axios',
       'mint-ui',
+      'muse-ui',
       'url',
       'lodash'
     ],
@@ -62,6 +63,9 @@ module.exports = {
     '@nuxtjs/proxy',
     '@nuxtjs/axios'
   ],
+  router: {
+    middleware: ['token', 'authenticated']
+  },
   proxy: {
     '/api/**': 'http://127.0.0.1:8000'
   },

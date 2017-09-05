@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-// import axios from 'axios'
-const axios = require('@nuxtjs/axios')
 
 Vue.use(Vuex)
 
@@ -15,7 +13,11 @@ const store = () => new Vuex.Store({
       refresh: '',
       timeout: ''
     },
-    login: false
+    login: false,
+    error: {
+      message: '',
+      name: ''
+    }
   },
   getters: {
     isLogin (state) {
@@ -26,6 +28,9 @@ const store = () => new Vuex.Store({
     },
     user (state) {
       return state.user
+    },
+    error (state) {
+      return state.error
     }
   },
   mutations: {
@@ -42,34 +47,45 @@ const store = () => new Vuex.Store({
       state.expire = {}
       state.login = false
     },
-    REFRESH (state, { token, refresh }) {
-      state.token = token
-      state.expire.refresh = refresh
+    REFRESH (state, data) {
+      state.token = data.token
+      state.expire.refresh = data.expire.refresh
     },
     UPDATE (state, data) {
       Object.keys(data).forEach(x => {
         state.user[x] = data[x]
       })
+    },
+    SET_ERROR (state, error) {
+      state.error = error
+    },
+    RESET_ERROR (state) {
+      state.error = {
+        message: '',
+        name: ''
+      }
     }
   },
   actions: {
-    async login ({ commit }, user) {
-      try {
-        const response = await axios.post('/account/login/', user)
-        const data = response.data
-        commit('INIT', data)
-        return Promise.resolve()
-      } catch (error) {
-        console.log(error)
-        return Promise.reject(error.response.data)
-      }
-      // return axios.post('/api/account/login/', user).then(response => {
+    login ({ commit }, user) {
+      // try {
+      //   const response = await this.$axios.$post('/account/login/', user)
       //   const data = response.data
       //   commit('INIT', data)
       //   return Promise.resolve()
-      // }).catch(error => {
+      // } catch (error) {
+      //   console.log(error)
       //   return Promise.reject(error.response.data)
-      // })
+      // }
+      console.log(this)
+      return this.$axios.$post('/api/account/login/', user).then(response => {
+        const data = response.data
+        commit('INIT', data)
+        return Promise.resolve()
+      }).catch(error => {
+        console.log(error)
+        return Promise.reject(error.response.data)
+      })
     },
     logout ({ commit }, user) {
       commit('REMOVE')

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import isMobilePhone from 'validator/lib/isMobilePhone'
 
 export default {
@@ -58,9 +58,18 @@ export default {
       loading: false
     }
   },
+  mounted () {
+    if (this.globalError.message && this.globalError.name === this.$route.name) {
+      this.$nextTick(() => {
+        this.showSnackbar(this.globalError.message)
+        this.RESET_ERROR()
+      })
+    }
+  },
   methods: {
-    ...mapActions([
-      'login'
+    ...mapMutations([
+      'INIT',
+      'RESET_ERROR'
     ]),
     validate () {
       Object.keys(this.formData).forEach(x => {
@@ -73,18 +82,21 @@ export default {
     isValidate () {
       return Object.values(this.error).every(x => x === '')
     },
-    handleLogin () {
+    async handleLogin () {
       this.validate()
       if (this.isValidate()) {
         this.loading = true
-        this.login(this.formData).then(() => {
+        try {
+          const data = await this.$axios.$post(this.url.LOGIN, this.formData)
+          this.INIT(data)
           this.loading = false
           this.showSnackbar('登录成功, 跳转至首页')
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
-        }).catch(data => {
+        } catch (error) {
+          const data = error.response.data
           this.loading = false
           this.showSnackbar(`登录失败: ${data.non_field_errors.join(',')}`)
-        })
+        }
       } else {
         this.showSnackbar('输入有误, 请重新输入')
       }
@@ -101,6 +113,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      globalError: 'error'
+    })
   }
 }
 </script>

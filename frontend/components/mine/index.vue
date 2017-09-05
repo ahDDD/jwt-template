@@ -9,7 +9,8 @@ div
     mu-content-block
       mu-menu.mine-menu(:autoWidth="false", width="auto")
         template(v-if="isLogin")
-          mu-menu-item(title="修改个人资料" rightIcon="keyboard_arrow_right")
+          mu-menu-item(title="修改个人资料" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'setting' })")
+          mu-menu-item(title="修改密码" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'setting-password' })")
           mu-divider
           mu-menu-item(title="关于我们" rightIcon="keyboard_arrow_right")
           mu-divider

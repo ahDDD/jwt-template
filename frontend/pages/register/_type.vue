@@ -161,21 +161,21 @@ export default {
         }
       })
     },
-    register () {
+    async register () {
       this.validate()
       if (this.isValidate()) {
         this.loading = true
-        this.$http.post(this.url.REGISTER, {
-          ...this.formData
-        }).then(response => {
+        try {
+          await this.$axios.$post(this.url.REGISTER, this.formData)
           this.loading = false
           this.showSnackbar('注册成功')
-        }).catch(error => {
+          setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
+        } catch (error) {
           const data = error.response.data
           const message = [].concat.apply([], Object.values(data)).join(',')
           this.loading = false
           this.showSnackbar(`注册失败: ${message}`)
-        })
+        }
       } else {
         this.showSnackbar('输入有误, 请重新输入')
       }

@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import DialogField from '~/components/setting/dialog-field.vue'
 
 export default {
@@ -66,25 +66,38 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'update'
+    ...mapMutations([
+      'UPDATE'
     ]),
     openDialog (key) {
       this.$refs.dialog.openDialog(key)
     },
-    handleSave () {
+    async handleSave () {
       this.loading = true
-      this.update(this._.cloneDeep(this.userInfo))
-        .then(() => {
+      const info = this._.cloneDeep(this.userInfo)
+      Object.keys(info).forEach(x => {
+        if (info[x] === this.user[x]) {
+          delete info[x]
+        }
+      })
+      if (Object.keys(info).length === 0) {
+        this.loading = false
+        this.showSnackbar('修改成功')
+        setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
+      } else {
+        try {
+          const data = await this.$axios.$patch(`${this.url.USER}${this.user.phone}/`, info)
+          this.UPDATE(data)
           this.loading = false
           this.showSnackbar('修改成功')
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
-        })
-        .catch(data => {
+        } catch (error) {
+          const data = error.response.data
           const message = [].concat.apply([], Object.values(data)).join(',')
           this.loading = false
           this.showSnackbar(`修改失败: ${message}`)
-        })
+        }
+      }
     },
     showSnackbar (message) {
       this.snackbar.message = message
