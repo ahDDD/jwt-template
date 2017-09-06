@@ -29,7 +29,8 @@ module.exports = {
   plugins: [
     '~/plugins/mint-ui',
     '~/plugins/muse-ui',
-    '~/plugins/utils'
+    '~/plugins/utils',
+    { src: '~plugins/vue-core-image-upload.js', ssr: false }
   ],
   build: {
     /*

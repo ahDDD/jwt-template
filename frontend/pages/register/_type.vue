@@ -8,7 +8,7 @@
     mu-text-field(
       labelFloat
       label="用户名"
-      hintText="请输入用户名"
+      hintText="请输入手机号"
       v-model="formData.phone",
       :errorText="error.phone"
       fullWidth

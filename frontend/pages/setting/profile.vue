@@ -1,38 +1,35 @@
 <template lang="pug">
 .register
-  mu-appbar(title="修改密码")
+  mu-appbar(title="医生资料")
     nuxt-link.nuxt-link-active(to="/" slot="left")
       mu-icon-button(icon="navigate_before" slot="left")
   mu-linear-progress(v-if="loading")
-  mu-content-block.register-content
-    mu-text-field(
-      labelFloat
-      label="原密码"
-      hintText="请输入原密码"
-      type="password",
-      v-model="formData.password",
-      :errorText="error.password"
-      fullWidth
-      @focus="error.password = ''")
-    mu-text-field(
-      labelFloat
-      label="新密码"
-      hintText="请输入原密码"
-      type="password",
-      v-model="formData.newPassword",
-      :errorText="error.newPassword"
-      fullWidth
-      @focus="error.newPassword = ''")
-    mu-text-field(
-      labelFloat
-      label="再次输入新密码"
-      hintText="请再次输入原密码"
-      type="password",
-      v-model="formData.newPassword2",
-      :errorText="error.newPassword"
-      fullWidth
-      @focus="error.newPassword = ''")
-    mu-raised-button(label="保存" @click="save" fullWidth primary)
+  .register-content
+    mu-list
+      mu-list-item(title="头像")
+        mu-avatar(v-if="user.image", :src="user.img" slot="rightAvatar")
+        i(v-else class="material-icons mine-icon" slot="rightAvatar") face
+    mu-content-block
+      mu-select-field(
+        v-model="formData.classify",
+        :labelFocusClass="['label-foucs']"
+        label="类别",
+        :errorText="error.classify"
+        fullWidth
+        @open="error.classify = ''",
+        :maxHeight="300")
+        mu-menu-item(v-for="(item, index) in classifyList", :key="index", :value="item[0]", :title="item[0]")
+      mu-raised-button(label="保存" @click="save" fullWidth primary)
+    vue-core-image-upload(
+      :class="['btn', 'btn-primary']",
+      :crop="false"
+      @imageuploaded="imageuploaded",
+      :data="image",
+      :max-file-size="5242880",
+      compress="50",
+      :url="upload.url",
+      :headers="upload.headers")
+      mu-raised-button(label="上传" fullWidth primary)
   mu-snackbar(
     v-if="snackbar.show",
     :message="snackbar.message"
@@ -42,23 +39,26 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
+import VueCoreImageUpload from 'vue-core-image-upload'
 
 export default {
-  mounted () {
+  async asyncData ({ app }) {
+    let data = await app.$axios.$get('/care/get_classify/')
+    return { classifyList: data.classify }
+  },
+  components: {
+    'vue-core-image-upload': VueCoreImageUpload
   },
   data () {
     return {
       formData: {
         password: '',
-        newPassword: '',
-        newPassword2: ''
+        classify: ''
       },
-      teamLabel: '',
-      jobLabel: '',
       error: {
         password: '',
-        newPassword: ''
+        classify: ''
       },
       validated: false,
       snackbar: {
@@ -66,13 +66,18 @@ export default {
         message: '',
         time: ''
       },
-      loading: false
+      loading: false,
+      classifyList: [],
+      image: {},
+      upload: {
+        url: '/api/account/profile/15768714216/',
+        headers: {
+          Authorization: `COOL ${this.$store.state.token}`
+        }
+      }
     }
   },
   methods: {
-    ...mapActions([
-      'logout'
-    ]),
     handleClose () {},
     validate () {
       Object.keys(this.formData).forEach(x => {
@@ -114,6 +119,14 @@ export default {
     hideSnackbar () {
       this.snackbar.show = false
       if (this.snackbar.time) clearTimeout(this.snackbar.time)
+    },
+    imageuploaded (res) {
+      if (res.errcode === 0) {
+        this.src = res.data.src
+      }
+    },
+    imagechanged (res) {
+      console.log(res)
     }
   },
   computed: {

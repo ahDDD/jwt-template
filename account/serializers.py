@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from account.models import User
+from account.models import User, DoctorProfile
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
@@ -19,6 +19,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ('is_active', 'is_admin', 'date_joined', 'last_login', 'id', 'password')
+        related_fields = ['profile']
+
+    image = serializers.FileField(source='profile.image')
+    classify = serializers.CharField(source='profile.classify')
 
 
 class UserChangePasswordSerializer(serializers.ModelSerializer):
@@ -27,3 +31,10 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ('phone', 'password')
         extra_kwargs = {'password': {'write_only': True}}
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorProfile
+        fields = ('image', 'classify')
+        related_fields = ['user']

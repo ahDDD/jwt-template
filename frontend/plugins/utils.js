@@ -5,7 +5,8 @@ const URL = {
     Vue.prototype.url = {
       REGISTER: '/account/register/',
       LOGIN: '/account/login/',
-      USER: '/account/user/'
+      USER: '/account/user/',
+      CLASSIFY: '/care/get_classify/'
     }
   }
 }

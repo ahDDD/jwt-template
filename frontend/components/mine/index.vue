@@ -4,11 +4,16 @@ div
     nuxt-link.mine-avatar-center(:to="avatarPath")
       mu-paper(class="mine-paper" circle :zDepth="4")
         i(class="material-icons mine-icon") face
-      mu-flat-button.mine-avatar-button(:label="`你好, ${userName}`" color="white")
+      mu-flat-button.mine-avatar-button(:label="`你好, ${user.name}`" color="white")
   .settings
     mu-content-block
       mu-menu.mine-menu(:autoWidth="false", width="auto")
         template(v-if="isLogin")
+          template(v-if="user.user_type === 'doctor'")
+            mu-menu-item(
+              :title="`${doctorProfileTitle}医生资料`"
+              rightIcon="keyboard_arrow_right"
+              @click="$router.push({ name: 'setting-profile' })")
           mu-menu-item(title="修改个人资料" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'setting' })")
           mu-menu-item(title="修改密码" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'setting-password' })")
           mu-divider
@@ -31,10 +36,13 @@ export default {
   computed: {
     ...mapGetters([
       'isLogin',
-      'userName'
+      'user'
     ]),
     avatarPath () {
       return this.isLogin ? '/setting/' : '/login/'
+    },
+    doctorProfileTitle () {
+      return this.user.user_type === 'doctor' ? (this.user.img === null && this.user.classify === '' ? '补充' : '修改') : ''
     }
   }
 }
