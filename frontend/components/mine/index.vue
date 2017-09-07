@@ -2,9 +2,12 @@
 div
   .top
     nuxt-link.mine-avatar-center(:to="avatarPath")
-      mu-paper(class="mine-paper" circle :zDepth="4")
-        i(class="material-icons mine-icon") face
-      mu-flat-button.mine-avatar-button(:label="`你好, ${user.name}`" color="white")
+      mu-papers(class="mine-paper" circle :zDepth="4")
+        mu-avatar(v-if="user.image", :src="`/${user.image}`", :size="80")
+        i(v-else class="material-icons mine-icon") face
+      mu-flat-button.mine-avatar-button(:label="`你好, ${userName}`" color="white")
+      span(v-if="user.user_type !== 'doctor'").main-span {{ `${user.team} | ${user.job} | ${user.classify}` }}
+      span(v-else-if="user.user_type !== 'player'").main-span {{ `${user.team} | ${user.job}` }}
   .settings
     mu-content-block
       mu-menu.mine-menu(:autoWidth="false", width="auto")
@@ -36,6 +39,7 @@ export default {
   computed: {
     ...mapGetters([
       'isLogin',
+      'userName',
       'user'
     ]),
     avatarPath () {
@@ -66,9 +70,14 @@ export default {
   display flex
   justify-content center
   align-items center
+  border solid 2px #FFFFFF
+  border-radius 40px
+  background-color #FFFFFF
   .mine-icon
     font-size 80px
     color #455a64
 .mine-menu
   overflow auto
+.main-span
+  color white
 </style>

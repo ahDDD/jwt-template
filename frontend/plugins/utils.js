@@ -6,6 +6,7 @@ const URL = {
       REGISTER: '/account/register/',
       LOGIN: '/account/login/',
       USER: '/account/user/',
+      PROFILE: '/account/profile/',
       CLASSIFY: '/care/get_classify/'
     }
   }

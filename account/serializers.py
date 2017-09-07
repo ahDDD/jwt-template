@@ -21,7 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('is_active', 'is_admin', 'date_joined', 'last_login', 'id', 'password')
         related_fields = ['profile']
 
-    image = serializers.FileField(source='profile.image')
+    def get_image(self, instance):
+        import os
+        # 返回前端服务器地址
+        return os.path.join('profile', instance.profile.image.name) if instance.profile else ''
+
+    image = serializers.SerializerMethodField()
     classify = serializers.CharField(source='profile.classify')
 
 
@@ -36,5 +41,5 @@ class UserChangePasswordSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorProfile
-        fields = ('image', 'classify')
-        related_fields = ['user']
+        fields = ('classify', )
+        lookup_field = 'user__phone'

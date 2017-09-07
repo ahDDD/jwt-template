@@ -6,8 +6,8 @@
   mu-linear-progress(v-if="loading")
   .register-content
     mu-list
-      mu-list-item(title="头像")
-        mu-avatar(v-if="user.image", :src="user.img" slot="rightAvatar")
+      mu-list-item(title="头像" @click="openDialog")
+        mu-avatar(v-if="user.image", :src="imageSrc" slot="rightAvatar")
         i(v-else class="material-icons mine-icon" slot="rightAvatar") face
     mu-content-block
       mu-select-field(
@@ -20,16 +20,26 @@
         :maxHeight="300")
         mu-menu-item(v-for="(item, index) in classifyList", :key="index", :value="item[0]", :title="item[0]")
       mu-raised-button(label="保存" @click="save" fullWidth primary)
+  mu-dialog(:open="dialog.show", title="上传头像")
+    template 请上传尺寸在400*400以下, 大小为50kB以下的图片
+    mu-content-block.profile-center(v-if="dialog.loading")
+      mu-circular-progress(:size="40")
     vue-core-image-upload(
-      :class="['btn', 'btn-primary']",
+      v-show="!dialog.loading",
       :crop="false"
       @imageuploaded="imageuploaded",
+      @imagechanged="imagechanged",
+      @imageuploading="imageuploading",
+      @errorhandle="errorhandle",
       :data="image",
-      :max-file-size="5242880",
+      :max-file-size="52428",
       compress="50",
       :url="upload.url",
-      :headers="upload.headers")
-      mu-raised-button(label="上传" fullWidth primary)
+      :headers="upload.headers",
+      :max-width="400",
+      :max-height="400")
+      mu-raised-button(label="选择" fullWidth primary)
+    mu-flat-button(v-if="!dialog.loading" slot="actions" @click="dialog.show = false" primary label="取消")
   mu-snackbar(
     v-if="snackbar.show",
     :message="snackbar.message"
@@ -39,7 +49,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import VueCoreImageUpload from 'vue-core-image-upload'
 
 export default {
@@ -50,14 +60,17 @@ export default {
   components: {
     'vue-core-image-upload': VueCoreImageUpload
   },
+  mounted () {
+    this.$nextTick(() => {
+      this.formData.classify = this.user.classify
+    })
+  },
   data () {
     return {
       formData: {
-        password: '',
         classify: ''
       },
       error: {
-        password: '',
         classify: ''
       },
       validated: false,
@@ -69,42 +82,45 @@ export default {
       loading: false,
       classifyList: [],
       image: {},
-      upload: {
-        url: '/api/account/profile/15768714216/',
-        headers: {
-          Authorization: `COOL ${this.$store.state.token}`
-        }
+      dialog: {
+        show: false,
+        loading: false
       }
     }
   },
   methods: {
+    ...mapMutations([
+      'UPDATE_PROFILE'
+    ]),
     handleClose () {},
     validate () {
       Object.keys(this.formData).forEach(x => {
         this.error[x] = this.formData[x] === '' ? '不能为空' : ''
-        if (x === 'newPassword2') {
-          this.error.newPassword = this.formData.newPassword === this.formData.newPassword2 ? '' : '两次输入的密码不一样!'
-        }
       })
     },
     async save () {
       this.validate()
-      if (this.isValidate()) {
-        this.loading = true
-        try {
-          await this.$axios.$post(`${this.url.USER}${this.user.phone}/set_password/`, this.formData)
-          this.loading = false
-          this.showSnackbar('修改成功, 请重新登录')
-          this.logout()
-          setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
-        } catch (error) {
-          const data = error.response.data
-          const message = [].concat.apply([], Object.values(data)).join(',')
-          this.loading = false
-          this.showSnackbar(`修改失败: ${message}`)
+      if (this.formData.classify !== this.user.classify) {
+        if (this.isValidate()) {
+          this.loading = true
+          try {
+            const data = await this.$axios.$put(`${this.url.PROFILE}${this.user.phone}/`, this.formData)
+            this.loading = false
+            this.showSnackbar('修改成功')
+            this.UPDATE_PROFILE({ classify: data.classify })
+            setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
+          } catch (error) {
+            const data = error.response.data
+            const message = [].concat.apply([], Object.values(data)).join(',')
+            this.loading = false
+            this.showSnackbar(`修改失败: ${message}`)
+          }
+        } else {
+          this.showSnackbar('输入有误, 请重新输入')
         }
       } else {
-        this.showSnackbar('输入有误, 请重新输入')
+        this.showSnackbar('修改成功')
+        setTimeout(() => { this.$router.push({ name: 'index' }) }, 500)
       }
     },
     isValidate () {
@@ -121,18 +137,48 @@ export default {
       if (this.snackbar.time) clearTimeout(this.snackbar.time)
     },
     imageuploaded (res) {
-      if (res.errcode === 0) {
-        this.src = res.data.src
+      if (res.errcode) {
+        this.showSnackbar('上传失败')
+        this.dialog.loading = false
+      } else {
+        this.UPDATE_PROFILE({ image: res.file })
+        this.showSnackbar('上传成功')
+        this.dialog.loading = false
+        this.close()
       }
     },
     imagechanged (res) {
-      console.log(res)
+    },
+    imageuploading (res) {
+      this.dialog.loading = true
+    },
+    errorhandle (err) {
+      this.showSnackbar(err)
+    },
+    openDialog () {
+      this.$nextTick(() => {
+        this.dialog.show = true
+      })
+    },
+    close () {
+      this.dialog.show = false
     }
   },
   computed: {
     ...mapGetters([
       'user'
-    ])
+    ]),
+    upload () {
+      return {
+        url: `/api/account/profile/${this.user.phone}/image/`,
+        headers: {
+          Authorization: `COOL ${this.$store.state.token}`
+        }
+      }
+    },
+    imageSrc () {
+      return this.image.base64Code ? this.image.base64Code : `/${this.user.image}`
+    }
   }
 }
 </script>
@@ -141,4 +187,7 @@ export default {
 .register-content
   height 90vh
   overflow scroll
+.profile-center
+  display flex
+  justify-content center
 </style>

@@ -64,6 +64,13 @@ const store = () => new Vuex.Store({
         message: '',
         name: ''
       }
+    },
+    UPDATE_PROFILE (state, { image, classify }) {
+      if (image) {
+        state.user.image = image
+      } else if (classify) {
+        state.user.classify = classify
+      }
     }
   },
   actions: {

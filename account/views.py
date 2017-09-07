@@ -56,17 +56,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'status': '密码验证错误'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = DoctorProfile.objects.all()
-    serializer_class = DoctorProfile
-    permission_classes = (permissions.IsAuthenticated, IsProfileOwnerOrReadOnly)
-    lookup_field = 'user__phone'
-
-    def pre_save(self, obj):
-        obj.image = self.request.FILES.get('file')
-
-
-class ProfileUpdate(APIView):
+class ProfileImageUpdate(APIView):
     parser_classes = (MultiPartParser, )
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsProfileOwnerOrReadOnly)
 
@@ -78,12 +68,22 @@ class ProfileUpdate(APIView):
 
     def post(self, request, phone, format=None):
         try:
-            profile = self.get_object(phone)
-            profile.image.delete()
-            profile.image = request.data['files']
-            upload = request.data['files']
-            profile.image.save(upload.name, upload)
-            file = os.path.join('profile', profile.image.name)
-            return Response(dict(file=file), status=204)
+            if request.data['files']:
+                profile = self.get_object(phone)
+                profile.image.delete()
+                profile.image = request.data['files']
+                upload = request.data['files']
+                profile.image.save(upload.name, upload)
+                file = os.path.join('profile', profile.image.name)
+                return Response(dict(file=file))
+            else:
+                return Response(dict(errcode=400), status=status.HTTP_400_BAD_REQUEST)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(dict(errcode=400), status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = DoctorProfile.objects.all().select_related('user')
+    permission_classes = (permissions.IsAuthenticated, IsProfileOwnerOrReadOnly)
+    serializer_class = ProfileSerializer
+    lookup_field = 'user__phone'
