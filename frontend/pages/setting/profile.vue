@@ -18,7 +18,7 @@
         fullWidth
         @open="error.classify = ''",
         :maxHeight="300")
-        mu-menu-item(v-for="(item, index) in classifyList", :key="index", :value="item[0]", :title="item[0]")
+        mu-menu-item(v-for="(item, index) in classifyList", :key="index", :value="item[0]", :title="item[1]")
       mu-raised-button(label="保存" @click="save" fullWidth primary)
   mu-dialog(:open="dialog.show", title="上传头像")
     template 请上传尺寸在400*400以下, 大小为50kB以下的图片

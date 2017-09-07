@@ -3,7 +3,7 @@ main
   .page-tab-container
     mt-tab-container(v-model="selected" swipeable)
       mt-tab-container-item(id="index")
-        p nihao
+        Care
       mt-tab-container-item(id="mine")
         Mine
   .nav
@@ -16,11 +16,13 @@ main
 <script>
 import Logo from '~/components/Logo.vue'
 import Mine from '~/components/mine/index.vue'
+import Care from '~/components/care/index.vue'
 
 export default {
   components: {
     Logo,
-    Mine
+    Mine,
+    Care
   },
   data () {
     return {

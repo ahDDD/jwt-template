@@ -17,7 +17,9 @@ const store = () => new Vuex.Store({
     error: {
       message: '',
       name: ''
-    }
+    },
+    // 用户提问的医生
+    doctor: {}
   },
   getters: {
     isLogin (state) {
@@ -71,6 +73,9 @@ const store = () => new Vuex.Store({
       } else if (classify) {
         state.user.classify = classify
       }
+    },
+    SET_DOCTOR (state, doctor) {
+      state.doctor = doctor
     }
   },
   actions: {
