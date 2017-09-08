@@ -2,14 +2,17 @@
 main
   .page-tab-container
     mt-tab-container(v-model="selected" swipeable)
-      mt-tab-container-item(id="index")
-        Care
+      mt-tab-container-item(id="care")
+        Care(v-if="selected === 'care'")
+      mt-tab-container-item(id="message")
+        Message(v-if="selected === 'message'")
       mt-tab-container-item(id="mine")
-        Mine
+        Mine(v-if="selected === 'mine'")
   .nav
     mu-paper
       mu-bottom-nav(:value="selected" @change="handleChange")
-        mu-bottom-nav-item(value="index" title="首页" icon="home")
+        mu-bottom-nav-item(value="care" title="首页" icon="home")
+        mu-bottom-nav-item(value="message" title="消息" icon="message")
         mu-bottom-nav-item(value="mine" title="我的" icon="account_circle")
 </template>
 
@@ -17,12 +20,14 @@ main
 import Logo from '~/components/Logo.vue'
 import Mine from '~/components/mine/index.vue'
 import Care from '~/components/care/index.vue'
+import Message from '~/components/message/index.vue'
 
 export default {
   components: {
     Logo,
     Mine,
-    Care
+    Care,
+    Message
   },
   data () {
     return {

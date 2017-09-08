@@ -57,7 +57,8 @@ module.exports = {
       // '~/plugins/mint-ui',
       new webpack.ProvidePlugin({
         '_': 'lodash'
-      })
+      }),
+      new webpack.ContextReplacementPlugin(/moment[\\/]locale$/, /^\.\/(zh-cn)$/)
     ]
   },
   modules: [

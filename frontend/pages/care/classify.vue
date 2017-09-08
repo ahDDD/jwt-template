@@ -25,7 +25,7 @@ div
       .classify-popup-center(v-if="popup.loading")
         mu-circular-progress(:size="40")
       mu-list(v-else)
-        mu-list-item(v-for="item in doctorList", :title="item.name")
+        mu-list-item(v-for="item in doctorList", :title="item.name", :key="item.id")
           mu-avatar(v-if="item.image", :src="`/${item.image}`" slot="leftAvatar")
           i(v-else class="material-icons mine-icon" slot="leftAvatar") face
           span(slot="describe")

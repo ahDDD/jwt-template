@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import moment from 'moment'
 
 const URL = {
   install (Vue, options) {
@@ -9,7 +10,8 @@ const URL = {
       PROFILE: '/account/profile/',
       CLASSIFY: '/care/get_classify/',
       DOCTOR: '/care/doctor/',
-      POST: '/care/post/'
+      POST: '/care/post/',
+      POST_LIST: '/care/post/list/'
     }
     Vue.prototype.utils = {
       classifyDisplay (classify) {
@@ -53,3 +55,5 @@ const URL = {
 Vue.use(URL)
 // 设置全局this._
 Vue.prototype._ = require('lodash')
+moment.locale('zh-cn')
+Vue.prototype.$moment = moment
