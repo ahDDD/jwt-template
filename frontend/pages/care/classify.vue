@@ -21,7 +21,7 @@ div
       mu-content-block.classify-popup
         p {{ popup.detail }}
         mu-divider
-        .divider {{ `为您推荐以下${doctorList.length}医生` }}
+        .divider {{ `为您推荐以下${doctorList.length}位医生` }}
       .classify-popup-center(v-if="popup.loading")
         mu-circular-progress(:size="40")
       mu-list(v-else)
@@ -102,6 +102,7 @@ export default {
     },
     post () {
       this.SET_DOCTOR(this.dialog.doctor)
+      this.$router.push({ name: 'care-post' })
     }
   },
   computed: {

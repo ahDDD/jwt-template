@@ -33,6 +33,9 @@ const store = () => new Vuex.Store({
     },
     error (state) {
       return state.error
+    },
+    doctor (state) {
+      return Object.keys(state.doctor).length > 0 ? state.doctor : ''
     }
   },
   mutations: {
@@ -76,6 +79,9 @@ const store = () => new Vuex.Store({
     },
     SET_DOCTOR (state, doctor) {
       state.doctor = doctor
+    },
+    RESET_DOCTOR (state) {
+      state.doctor = {}
     }
   },
   actions: {

@@ -8,7 +8,8 @@ const URL = {
       USER: '/account/user/',
       PROFILE: '/account/profile/',
       CLASSIFY: '/care/get_classify/',
-      DOCTOR: '/care/doctor/'
+      DOCTOR: '/care/doctor/',
+      POST: '/care/post/'
     }
     Vue.prototype.utils = {
       classifyDisplay (classify) {

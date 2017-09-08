@@ -6,7 +6,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('is_active', 'is_admin', 'date_joined', 'last_login', 'id')
+        exclude = ('is_active', 'is_admin', 'date_joined', 'last_login')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -18,13 +18,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        exclude = ('is_active', 'is_admin', 'date_joined', 'last_login', 'id', 'password')
+        exclude = ('is_active', 'is_admin', 'date_joined', 'last_login', 'password')
         related_fields = ['profile']
 
     def get_image(self, instance):
         import os
         # 返回前端服务器地址
-        return os.path.join('profile', instance.profile.image.name) if instance.profile else ''
+        return os.path.join('profile', instance.profile.image.name) if hasattr(instance, 'profile') else ''
 
     image = serializers.SerializerMethodField()
     classify = serializers.CharField(source='profile.classify')
