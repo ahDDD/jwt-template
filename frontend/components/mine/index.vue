@@ -7,7 +7,7 @@ div
         i(v-else class="material-icons mine-icon") face
       mu-flat-button.mine-avatar-button(:label="`你好, ${userName}`" color="white")
       template(v-if="user.user_type")
-        span(v-if="user.user_type === 'doctor'").main-span {{ `${user.team} | ${user.job} | ${user.classify}` }}
+        span(v-if="user.user_type === 'doctor'").main-span {{ doctorSpanDisplay(user) }}
         span(v-else-if="user.user_type === 'player'").main-span {{ `${user.team} | ${user.job}` }}
   .settings
     mu-content-block
@@ -26,6 +26,7 @@ div
           mu-menu-item(title="退出登录" rightIcon="keyboard_arrow_right" @click="logout")
         template(v-else)
           mu-menu-item(title="立即登录" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'login' })")
+  mu-toast(v-if="doctorFlag" message="请尽快补充资料, 否则患者将无法搜寻到您!")
 </template>
 
 <script>
@@ -35,19 +36,23 @@ export default {
   methods: {
     ...mapActions([
       'logout'
-    ])
+    ]),
+    doctorSpanDisplay (user) {
+      return [user.team, user.job, this.utils.classifyDisplay(user.classify)].filter(x => x).join(' | ')
+    }
   },
   computed: {
     ...mapGetters([
       'isLogin',
       'userName',
-      'user'
+      'user',
+      'doctorFlag'
     ]),
     avatarPath () {
       return this.isLogin ? '/setting/' : '/login/'
     },
     doctorProfileTitle () {
-      return this.user.user_type === 'doctor' ? (this.user.img === null && this.user.classify === '' ? '补充' : '修改') : ''
+      return this.doctorFlag ? '补充' : '修改'
     }
   }
 }

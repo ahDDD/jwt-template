@@ -15,5 +15,5 @@ class Comment(models.Model):
     post = models.ForeignKey(to=Post, related_name='comment')
     content = models.TextField()
     user = models.ForeignKey(to=User, related_name='reply')
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)

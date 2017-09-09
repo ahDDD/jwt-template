@@ -5,7 +5,8 @@ from care.views import (
     DoctorList,
     UserPostView,
     PostListView,
-    PostDetailView
+    PostDetailView,
+    CommentView
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     url(r'^post/$', UserPostView.as_view()),
     url(r'^post/list/$', PostListView.as_view()),
     url(r'^message/(?P<id>[0-9]+)/$', PostDetailView.as_view()),
+    url(r'^comment/$', CommentView.as_view()),
 ]

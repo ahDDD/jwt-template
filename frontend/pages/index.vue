@@ -11,12 +11,16 @@ main
   .nav
     mu-paper
       mu-bottom-nav(:value="selected" @change="handleChange")
-        mu-bottom-nav-item(value="care" title="首页" icon="home")
-        mu-bottom-nav-item(value="message" title="消息" icon="message")
-        mu-bottom-nav-item(value="mine" title="我的" icon="account_circle")
+        mu-bottom-nav-item(
+          v-for="(item, index) in nav",
+          :value="item.value",
+          :title="item.title",
+          :icon="item.icon",
+          :key="index")
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Logo from '~/components/Logo.vue'
 import Mine from '~/components/mine/index.vue'
 import Care from '~/components/care/index.vue'
@@ -37,6 +41,23 @@ export default {
   methods: {
     handleChange (val) {
       this.selected = val
+    }
+  },
+  computed: {
+    ...mapGetters([
+      'user'
+    ]),
+    nav () {
+      const nav = [
+        { value: 'message', title: '消息', icon: 'message' },
+        { value: 'mine', title: '我的', icon: 'account_circle' }
+      ]
+      if (this.user.user_type !== 'doctor') {
+        nav.unshift({ value: 'care', title: '首页', icon: 'home' })
+        return nav
+      } else {
+        return nav
+      }
     }
   }
 }

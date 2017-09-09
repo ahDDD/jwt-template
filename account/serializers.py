@@ -24,7 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_image(self, instance):
         import os
         # 返回前端服务器地址
-        return os.path.join('profile', instance.profile.image.name) if hasattr(instance, 'profile') else ''
+        if hasattr(instance, 'profile'):
+            return os.path.join('profile', instance.profile.image.name) if instance.profile.image.name else None
+        return None
 
     image = serializers.SerializerMethodField()
     classify = serializers.CharField(source='profile.classify')

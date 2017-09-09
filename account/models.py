@@ -62,6 +62,7 @@ class User(AbstractBaseUser):
     user_type = models.CharField(choices=TYPE, max_length=6, blank=True)
     name = models.CharField(max_length=10, blank=True)
     sex = models.CharField(choices=SEX, max_length=6, blank=True)
+    age = models.IntegerField(default=0)
     team = models.CharField('所属医院或战队', max_length=255, default=None, blank=True, null=True)
     game = models.CharField(max_length=140, default=None, null=True, blank=True)
     job = models.CharField('职位', max_length=140, default=None, null=True, blank=True)

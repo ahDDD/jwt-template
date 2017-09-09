@@ -22,7 +22,9 @@
       v-model="formData.title",
       :errorText="error.title"
       fullWidth
-      @focus="error.title = ''")
+      @focus="error.title = ''",
+      @textOverflow="handleInputOverflow",
+      :maxLength="40")
     mu-text-field(
       labelFloat
       label="补充"
@@ -68,13 +70,12 @@ export default {
   },
   methods: {
     validate () {
-      Object.keys(this.formData).forEach(x => {
-        if (x === 'title') {
-          this.error[x] = this.formData[x] === '' ? '不能为空' : ''
-        } else if (x === 'detail') {
-          this.error[x] = (this.formData[x].length + this.formData.detail.length) < 15 ? '问询内容过短' : ''
-        }
-      })
+      if (this.formData.title) {
+        this.error.title = this.formData.title.length > 40 ? '超长了' : ''
+      } else {
+        this.error.title = '不能为空'
+      }
+      this.error.detail = (this.formData.title.length + this.formData.detail.length) < 15 ? '问询内容过短' : ''
     },
     isValidate () {
       return Object.values(this.error).every(x => x === '')
@@ -89,7 +90,7 @@ export default {
           await this.$axios.$post(this.url.POST, this.formData)
           this.loading = false
           this.showSnackbar('问询成功')
-          // setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
+          setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
         } catch (error) {
           const data = error.response.data
           const message = [].concat.apply([], Object.values(data)).join(',')
@@ -109,6 +110,9 @@ export default {
     hideSnackbar () {
       this.snackbar.show = false
       if (this.snackbar.time) clearTimeout(this.snackbar.time)
+    },
+    handleInputOverflow (isOverflow) {
+      this.error.title = isOverflow ? '超长了' : ''
     }
   },
   computed: {

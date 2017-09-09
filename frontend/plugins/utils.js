@@ -11,7 +11,8 @@ const URL = {
       CLASSIFY: '/care/get_classify/',
       DOCTOR: '/care/doctor/',
       POST: '/care/post/',
-      POST_LIST: '/care/post/list/'
+      POST_LIST: '/care/post/list/',
+      COMMENT: '/care/comment/'
     }
     Vue.prototype.utils = {
       classifyDisplay (classify) {
@@ -46,6 +47,13 @@ const URL = {
           'GRCRK': '感染传染科',
           'TTMZK': '疼痛&麻醉科'
         }[classify]
+      },
+      sexDisplay (sex) {
+        return {
+          'male': '男',
+          'female': '女',
+          'secret': '保密'
+        }[sex]
       }
     }
   }

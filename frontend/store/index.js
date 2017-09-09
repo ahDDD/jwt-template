@@ -36,6 +36,12 @@ const store = () => new Vuex.Store({
     },
     doctor (state) {
       return Object.keys(state.doctor).length > 0 ? state.doctor : ''
+    },
+    doctorFlag (state) {
+      return state.user.user_type === 'doctor' ? (state.user.image === null && state.user.classify === '') : ''
+    },
+    isDoctor (state) {
+      return state.user.user_type === 'doctor'
     }
   },
   mutations: {
