@@ -12,7 +12,8 @@ const URL = {
       DOCTOR: '/care/doctor/',
       POST: '/care/post/',
       POST_LIST: '/care/post/list/',
-      COMMENT: '/care/comment/'
+      COMMENT: '/care/comment/',
+      RESET: '/account/user/password_reset/'
     }
     Vue.prototype.utils = {
       classifyDisplay (classify) {

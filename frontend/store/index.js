@@ -125,6 +125,11 @@ const store = () => new Vuex.Store({
     },
     SELECT_NAV (state, selected) {
       state.nav.selected = selected
+    },
+    PAWD_RESET (state, { token, expire }) {
+      state.token = token
+      state.expire.refresh = expire
+      state.expire.timeout = expire
     }
   },
   actions: {

@@ -31,7 +31,7 @@
     action="关闭"
     @actionClick="hideSnackbar"
     @close="hideSnackbar")
-  nuxt-link.find-button(to="/" slot="left")
+  nuxt-link.find-button(to="/reset" slot="left")
     mu-flat-button(label="忘记密码?")
 </template>
 

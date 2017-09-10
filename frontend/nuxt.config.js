@@ -7,7 +7,7 @@ module.exports = {
   // ssr无法使用localStorage, 只能使用spa模式
   mode: 'spa',
   head: {
-    title: 'frontend',
+    title: '凉逸医疗',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

@@ -1,11 +1,13 @@
 import os
+from datetime import datetime, timedelta
 from django.http import Http404
 from rest_framework import permissions
 from rest_framework import mixins, generics
 from rest_framework.parsers import FileUploadParser, FormParser, MultiPartParser
 from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
-
+from rest_framework_jwt.utils import jwt_decode_handler, jwt_encode_handler
+from django.core.mail import send_mail
+from django.conf import settings
 from account.serializers import (
     User,
     UserSerializer,
@@ -87,3 +89,53 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated, IsProfileOwnerOrReadOnly)
     serializer_class = ProfileSerializer
     lookup_field = 'user__phone'
+
+
+class PasswordForgotView(APIView):
+
+    def post(self, request, format=None):
+        try:
+            user = User.objects.get(phone=request.data['user'])
+        except User.DoesNotExist:
+            raise Http404
+        exp = int((datetime.now() + timedelta(hours=1)).timestamp()) * 1000
+        token = jwt_encode_handler(dict(user=user.phone, exp=exp))
+        title = '[Cool]密码重置申请'
+        content = '''{}, 您好,
+        您最近申请了重设密码, 请点击下面的链接设置新密码:
+        {}/setting/reset?token={}
+        
+        请勿回复此邮件
+        '''.format(user.name, settings.HOST, token.replace('.', '_'))
+        send_mail(
+            title,
+            content,
+            'cool',
+            [user.email],
+            fail_silently=False
+        )
+        return Response()
+
+
+class PasswordResetView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        try:
+            token = request.data['token']
+            payload = jwt_decode_handler(token)
+        except:
+            return Response(dict(error='token错误'), status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(phone=request.data['user'])
+        except User.DoesNotExist:
+            raise Http404
+        if payload.get('user') != user.phone:
+            return Response(dict(error='token错误'), status=status.HTTP_400_BAD_REQUEST)
+        exp = int(datetime.now().timestamp()) * 1000
+        if payload.get('exp', 0) > exp:
+            user.set_password(request.data['password'])
+            user.save()
+            return Response({'status': 'password set'})
+        else:
+            return Response(dict(error='token过期'), status=status.HTTP_400_BAD_REQUEST)

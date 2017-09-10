@@ -27,6 +27,7 @@ SECRET_KEY = 'b6+^w9azl(#%2uxk$==&x=b9*w*fa@+o#ddl63!nqg^xfi#sw='
 DEBUG = True
 
 ALLOWED_HOSTS = []
+HOST = '127.0.0.1:3000'
 
 
 # Application definition
@@ -153,3 +154,12 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/frontend/static/profile/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend', 'static', 'profile').replace('//', '/')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ddsweet520@live.com'
+EMAIL_HOST_PASSWORD = 'deathnote0'
+DEFAULT_FROM_EMAIL = 'cool'
