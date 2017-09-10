@@ -1,14 +1,15 @@
 <template lang="pug">
   mu-dialog(:open="dialog.show", :title="dialog.title" @close="dialog.show = false")
     mu-text-field(
-      v-if="dialog.transKey !== 'sex'"
+      v-if="dialog.transKey === 'age'"
       v-model="dialog.value"
       fullWidth
       required,
+      type="number",
       :errorText="dialog.error",
       @focus="dialog.error = ''")
     mu-select-field(
-      v-else
+      v-else-if="dialog.transKey === 'sex'"
       v-model="dialog.value",
       :labelFocusClass="['label-foucs']"
       label="性别",
@@ -18,6 +19,13 @@
       mu-menu-item(value="male" title="男")
       mu-menu-item(value="female" title="女")
       mu-menu-item(value="secret" title="保密")
+    mu-text-field(
+      v-else
+      v-model="dialog.value"
+      fullWidth
+      required,
+      :errorText="dialog.error",
+      @focus="dialog.error = ''")
     mu-flat-button(slot="actions" @click="dialog.show = false" primary label="取消")
     mu-flat-button(slot="actions" primary @click="close" label="确定")
 </template>
@@ -51,6 +59,8 @@ export default {
         this.dialog.error = isEmail(this.dialog.value) ? '' : '请输入合法邮箱'
       } else if (this.dialog.transKey === 'name') {
         this.dialog.error = this.dialog.value.length > 10 ? '过长了' : ''
+      } else if (this.dialog.transKey === 'age') {
+        this.dialog.error = this.dialog.value > 0 && this.dialog.value < 70 ? '' : '请输入真实年龄'
       }
     },
     openDialog (key) {
@@ -63,7 +73,8 @@ export default {
         '医院': 'team',
         '职位': 'job',
         '职称': 'job',
-        '游戏': 'game'
+        '游戏': 'game',
+        '年龄': 'age'
       }[key]
       this.dialog.value = this._.cloneDeep(this.userInfo[this.dialog.transKey])
       this.$nextTick(() => {

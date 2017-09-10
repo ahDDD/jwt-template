@@ -8,6 +8,7 @@
     mu-menu-item.setting-item(title="姓名", :afterText="userInfo.name" @click="openDialog('姓名')")
     mu-menu-item.setting-item(title="性别", :afterText="sexDisplay" @click="openDialog('性别')")
     mu-menu-item.setting-item(title="邮箱", :afterText="userInfo.email" @click="openDialog('邮箱')")
+    mu-menu-item.setting-item(title="年龄", :afterText="userInfo.age" @click="openDialog('年龄')")
     mu-menu-item.setting-item(
       v-if="isNotNormal",
       :title="teamTitle",

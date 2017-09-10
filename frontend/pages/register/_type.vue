@@ -43,6 +43,15 @@
       mu-menu-item(value="female" title="女")
       mu-menu-item(value="secret" title="保密")
     mu-text-field(
+      labelFloat
+      label="年龄"
+      hintText="请输入年龄"
+      type="number"
+      v-model="formData.age",
+      :errorText="error.age"
+      fullWidth
+      @open="error.age = ''")
+    mu-text-field(
       v-if="this.$route.params.type !== 'normal'"
       labelFloat,
       :label="teamLabel",
@@ -120,7 +129,8 @@ export default {
         password: '',
         name: '',
         sex: '',
-        email: ''
+        email: '',
+        age: 0
       },
       teamLabel: '',
       jobLabel: '',
@@ -129,7 +139,8 @@ export default {
         password: '',
         name: '',
         sex: '',
-        email: ''
+        email: '',
+        age: ''
       },
       validated: false,
       genderPopup: false,
@@ -158,6 +169,8 @@ export default {
           this.error[x] = isMobilePhone(this.formData[x], 'zh-CN') ? '' : '用户名必须为合法手机号'
         } else if (x === 'email') {
           this.error[x] = isEmail(this.formData[x]) ? '' : '请输入合法邮箱'
+        } else if (x === 'age') {
+          this.error[x] = this.formData[x] > 0 && this.formData[x] < 70 ? '' : '请输入真实年龄'
         }
       })
     },
