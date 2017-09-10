@@ -19,7 +19,14 @@ const store = () => new Vuex.Store({
       name: ''
     },
     // 用户提问的医生
-    doctor: {}
+    doctor: {},
+    nav: {
+      item: [
+        { value: 'care', title: '首页', icon: 'home' },
+        { value: 'mine', title: '我的', icon: 'account_circle' }
+      ],
+      selected: 'care'
+    }
   },
   getters: {
     isLogin (state) {
@@ -42,6 +49,9 @@ const store = () => new Vuex.Store({
     },
     isDoctor (state) {
       return state.user.user_type === 'doctor'
+    },
+    nav (state) {
+      return state.nav
     }
   },
   mutations: {
@@ -88,6 +98,33 @@ const store = () => new Vuex.Store({
     },
     RESET_DOCTOR (state) {
       state.doctor = {}
+    },
+    INIT_NAV (state) {
+      if (state.user.user_type === 'doctor') {
+        state.nav.item = [
+          { value: 'message', title: '消息', icon: 'message' },
+          { value: 'mine', title: '我的', icon: 'account_circle' }
+        ]
+      } else {
+        state.nav.item = [
+          { value: 'care', title: '首页', icon: 'home' },
+          { value: 'message', title: '消息', icon: 'message' },
+          { value: 'mine', title: '我的', icon: 'account_circle' }
+        ]
+      }
+    },
+    RESET_NAV (state) {
+      const selected = state.nav.selected === 'message' ? 'mine' : state.nav.selected
+      state.nav = {
+        item: [
+          { value: 'care', title: '首页', icon: 'home' },
+          { value: 'mine', title: '我的', icon: 'account_circle' }
+        ],
+        selected: selected
+      }
+    },
+    SELECT_NAV (state, selected) {
+      state.nav.selected = selected
     }
   },
   actions: {
@@ -113,6 +150,7 @@ const store = () => new Vuex.Store({
     },
     logout ({ commit }, user) {
       commit('REMOVE')
+      commit('RESET_NAV')
     },
     update ({ commit, state }, info) {
       Object.keys(info).forEach(x => {

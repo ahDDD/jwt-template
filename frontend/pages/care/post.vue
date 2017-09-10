@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -69,6 +69,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations([
+      'SELECT_NAV'
+    ]),
     validate () {
       if (this.formData.title) {
         this.error.title = this.formData.title.length > 40 ? '超长了' : ''
@@ -90,6 +93,7 @@ export default {
           await this.$axios.$post(this.url.POST, this.formData)
           this.loading = false
           this.showSnackbar('问询成功')
+          this.SELECT_NAV('message')
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
         } catch (error) {
           const data = error.response.data

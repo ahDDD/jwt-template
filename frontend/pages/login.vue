@@ -69,7 +69,8 @@ export default {
   methods: {
     ...mapMutations([
       'INIT',
-      'RESET_ERROR'
+      'RESET_ERROR',
+      'INIT_NAV'
     ]),
     validate () {
       Object.keys(this.formData).forEach(x => {
@@ -91,6 +92,7 @@ export default {
           this.INIT(data)
           this.loading = false
           this.showSnackbar('登录成功, 跳转至首页')
+          this.INIT_NAV()
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
         } catch (error) {
           const data = error.response.data

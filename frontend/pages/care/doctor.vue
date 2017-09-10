@@ -20,7 +20,7 @@ div
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   async asyncData ({ app }) {
@@ -39,9 +39,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      'logout'
-    ]),
     backTopCallBack () {
       window.alert('I back top!')
     },
