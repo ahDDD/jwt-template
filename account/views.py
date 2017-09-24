@@ -92,6 +92,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
 
 class PasswordForgotView(APIView):
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format=None):
         try:
@@ -114,7 +115,7 @@ class PasswordForgotView(APIView):
             [user.email],
             fail_silently=False
         )
-        return Response()
+        return Response({'status': 'done'})
 
 
 class PasswordResetView(APIView):

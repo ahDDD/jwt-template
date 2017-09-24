@@ -1,54 +1,39 @@
 <template lang="pug">
 .register
-  mu-appbar(title="登录")
+  mu-appbar(title="忘记密码")
     nuxt-link(to="/" slot="left")
       mu-icon-button(icon="navigate_before")
-    nuxt-link(to="/register/" slot="right")
-      mu-flat-button(color="white" label="注册")
   mu-linear-progress(v-if="loading")
   mu-content-block.login-content.type
     mu-text-field(
       labelFloat
       label="用户名"
       hintText="请输入手机号"
-      v-model="formData.phone",
-      :errorText="error.phone"
+      v-model="formData.user",
+      :errorText="error.user"
       fullWidth
-      @focus="error.phone = ''")
-    mu-text-field(
-      labelFloat
-      label="密码"
-      hintText="请输入8-16位密码"
-      type="password",
-      v-model="formData.password",
-      :errorText="error.password"
-      fullWidth
-      @focus="error.password = ''")
-    mu-raised-button.login-button(label="登录" @click="handleLogin" fullWidth primary)
+      @focus="error.user = ''")
+    mu-raised-button.login-button(label="发送邮件" @click="handleLogin" fullWidth primary)
   mu-snackbar(
     v-if="snackbar.show",
     :message="snackbar.message"
     action="关闭"
     @actionClick="hideSnackbar"
     @close="hideSnackbar")
-  nuxt-link.find-button(to="/forgot/" slot="left")
-    mu-flat-button(label="忘记密码?")
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import isMobilePhone from 'validator/lib/isMobilePhone'
 
 export default {
   data () {
     return {
       formData: {
-        phone: '',
-        password: ''
+        user: ''
       },
       error: {
-        phone: '',
-        password: ''
+        user: ''
       },
       snackbar: {
         show: false,
@@ -59,23 +44,12 @@ export default {
     }
   },
   mounted () {
-    if (this.globalError.message && this.globalError.name === this.$route.name) {
-      this.$nextTick(() => {
-        this.showSnackbar(this.globalError.message)
-        this.RESET_ERROR()
-      })
-    }
   },
   methods: {
-    ...mapMutations([
-      'INIT',
-      'RESET_ERROR',
-      'INIT_NAV'
-    ]),
     validate () {
       Object.keys(this.formData).forEach(x => {
         this.error[x] = this.formData[x] === '' ? '不能为空' : ''
-        if (x === 'phone') {
+        if (x === 'user') {
           this.error[x] = isMobilePhone(this.formData[x], 'zh-CN') ? '' : '用户名必须为合法手机号'
         }
       })
@@ -88,16 +62,14 @@ export default {
       if (this.isValidate()) {
         this.loading = true
         try {
-          const data = await this.$axios.$post(this.url.LOGIN, this.formData)
-          this.INIT(data)
+          await this.$axios.$post(this.url.FORGOT, this.formData)
           this.loading = false
-          this.showSnackbar('登录成功, 跳转至首页')
-          this.INIT_NAV()
+          this.showSnackbar('邮件已发送, 请查收邮件')
           setTimeout(() => { this.$router.push({ name: 'index' }) }, 1500)
         } catch (error) {
           const data = error.response.data
           this.loading = false
-          this.showSnackbar(`登录失败: ${data.non_field_errors.join(',')}`)
+          this.showSnackbar(`发送失败: ${data.non_field_errors.join(',')}`)
         }
       } else {
         this.showSnackbar('输入有误, 请重新输入')
