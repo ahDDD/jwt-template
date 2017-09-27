@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import TemplateView
 from account.urls import urlpatterns as account_urls
 from care.urls import urlpatterns as care_urls
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^$', TemplateView.as_view(template_name='index.html')),
     url(r'^api/account/', include(account_urls, namespace='account', app_name='account')),
     url(r'^api/care/', include(care_urls, namespace='care', app_name='care')),
+    url(r'^\w+(/)?\w*$', TemplateView.as_view(template_name='index.html'))
 ]

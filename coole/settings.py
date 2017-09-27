@@ -26,7 +26,7 @@ SECRET_KEY = 'b6+^w9azl(#%2uxk$==&x=b9*w*fa@+o#ddl63!nqg^xfi#sw='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost ', '.gaonengyujing.com']
 HOST = '127.0.0.1:3000'
 
 
@@ -59,7 +59,7 @@ ROOT_URLCONF = 'coole.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['frontend/dist'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -150,7 +150,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/frontend/dist/'.replace('//', '/')
+
+# build static out
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend', 'dist').replace('//', '/'),
+]
 
 MEDIA_URL = '/frontend/static/profile/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend', 'static', 'profile').replace('//', '/')
