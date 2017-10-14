@@ -26,6 +26,9 @@ div
           mu-menu-item(title="退出登录" rightIcon="keyboard_arrow_right" @click="logout")
         template(v-else)
           mu-menu-item(title="立即登录" rightIcon="keyboard_arrow_right" @click="$router.push({ name: 'login' })")
+        //- mu-divider
+        //- .logo
+        //-   img(src="~static/main_logo.png")
   mu-toast(v-if="doctorFlag" message="请尽快补充资料, 否则患者将无法搜寻到您!")
 </template>
 
@@ -86,4 +89,10 @@ export default {
   overflow auto
 .main-span
   color white
+.logo
+  display flex
+  justify-content center
+  align-items flex-end
+  img
+    height 2em
 </style>
